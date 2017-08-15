@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using DG.Tweening;
 using System;
-using AInput.Info;
 using System.Collections.Generic;
 
 namespace AInput {
@@ -32,21 +31,20 @@ namespace AInput {
         public bool canTake { get; private set; }
         public float followSpeed { get; private set; }
         public float dropDuration { get; private set; }
-        #region Constructors
-        private DragAndDropAction(BaseInfo takableInfo,
-            BaseInfo dragCollidableInfo,
-            BaseInfo droppableInfo,
-            Action<Collider2D> OnTaken,
-            Action<Collider2D> OnTakeFailed,
-            Action<Collider2D> OnDragged,
-            Action<Collider2D> OnDragCollided,
-            Action<Collider2D> OnDragCollideFailed,
-            Action<Collider2D> OnDropped,
-            Action<Collider2D> OnDropFailed,
-            SafeDropType safeDropType,
-            DragType dragType,
-            float followSpeed,
-            float dropDuration) {
+        public DragAndDropAction(BaseInfo takableInfo,
+            BaseInfo dragCollidableInfo = null,
+            BaseInfo droppableInfo = null,
+            Action<Collider2D> OnTaken = null,
+            Action<Collider2D> OnTakeFailed = null,
+            Action<Collider2D> OnDragged = null,
+            Action<Collider2D> OnDragCollided = null,
+            Action<Collider2D> OnDragCollideFailed = null,
+            Action<Collider2D> OnDropped = null,
+            Action<Collider2D> OnDropFailed = null,
+            SafeDropType safeDropType = SafeDropType.UnableToTakeAny,
+            DragType dragType = DragType.MoveWith,
+            float followSpeed = 0.5f,
+            float dropDuration = 0.5f) {
             this.OnTaken += OnTaken;
             this.OnTakeFailed += OnTakeFailed;
             this.OnDragged += OnDragged;
@@ -65,102 +63,6 @@ namespace AInput {
             this.draggableObject = null;
             this.startPosition = default(Vector3);
             this.takenObjectCollider = null;
-        }
-        public static DragAndDropAction Colliders(List<Collider2D> correctTakeColliders = null,
-            List<Collider2D> uncorrectTakeColliders = null,
-            List<Collider2D> correctDragCollidableColliders = null,
-            List<Collider2D> uncorrectDragCollidableColliders = null,
-            List<Collider2D> correctDropColliders = null,
-            List<Collider2D> uncorrectDropColliders = null,
-            Action<Collider2D> OnTaken = null,
-            Action<Collider2D> OnTakeFailed = null,
-            Action<Collider2D> OnDragged = null,
-            Action<Collider2D> OnDragCollided = null,
-            Action<Collider2D> OnDragCollideFailed = null,
-            Action<Collider2D> OnDropped = null,
-            Action<Collider2D> OnDropFailed = null,
-            SafeDropType safeDropType = SafeDropType.UnableToTakeAny,
-            DragType dragType = DragType.MoveWith,
-            float followSpeed = 0.5f,
-            float dropDuration = 0.5f) {
-            return new DragAndDropAction(OnTaken: OnTaken,
-                OnTakeFailed: OnTakeFailed,
-                OnDragged: OnDragged,
-                OnDragCollided: OnDragCollided,
-                OnDragCollideFailed: OnDragCollideFailed,
-                OnDropped: OnDropped,
-                OnDropFailed: OnDropFailed,
-                takableInfo: new CollidersInfo(correctTakeColliders, uncorrectTakeColliders),
-                dragCollidableInfo: new CollidersInfo(correctDragCollidableColliders, uncorrectDragCollidableColliders),
-                droppableInfo: new CollidersInfo(correctDropColliders, uncorrectDropColliders),
-                safeDropType: safeDropType,
-                dragType: dragType,
-                followSpeed: followSpeed,
-                dropDuration: dropDuration);
-        }
-        public static DragAndDropAction NamePart(string correctTakeNamePart = "",
-            string uncorrectTakeNamePart = "",
-            string correctDragCollidableNamePart = "",
-            string uncorrectDragCollidableNamePart = "",
-            string correctDropNamePart = "",
-            string uncorrectDropNamePart = "", 
-            Action<Collider2D> OnTaken = null,
-            Action<Collider2D> OnTakeFailed = null,
-            Action<Collider2D> OnDragged = null,
-            Action<Collider2D> OnDragCollided = null,
-            Action<Collider2D> OnDragCollideFailed = null,
-            Action<Collider2D> OnDropped = null,
-            Action<Collider2D> OnDropFailed = null,
-            SafeDropType safeDropType = SafeDropType.UnableToTakeAny,
-            DragType dragType = DragType.MoveWith,
-            float followSpeed = 0.5f,
-            float dropDuration = 0.5f) {
-            return new DragAndDropAction(OnTaken: OnTaken,
-                OnTakeFailed: OnTakeFailed,
-                OnDragged: OnDragged,
-                OnDragCollided: OnDragCollided,
-                OnDragCollideFailed: OnDragCollideFailed,
-                OnDropped: OnDropped,
-                OnDropFailed: OnDropFailed,
-                takableInfo: new NamePartInfo(correctTakeNamePart, uncorrectTakeNamePart),
-                dragCollidableInfo: new NamePartInfo(correctDragCollidableNamePart, uncorrectDragCollidableNamePart),
-                droppableInfo: new NamePartInfo(correctDropNamePart, uncorrectDropNamePart),
-                safeDropType: safeDropType,
-                dragType: dragType,
-                followSpeed: followSpeed,
-                dropDuration: dropDuration);
-        }
-        public static DragAndDropAction FullNames(List<string> correctTakeFullNames = null,
-            List<string> uncorrectTakeFullNames = null,
-            List<string> correctDragCollidableFullNames = null,
-            List<string> uncorrectDragCollidableFullNames = null,
-            List<string> correctDropFullNames = null,
-            List<string> uncorrectDropFullNames = null,
-            Action<Collider2D> OnTaken = null,
-            Action<Collider2D> OnTakeFailed = null,
-            Action<Collider2D> OnDragged = null,
-            Action<Collider2D> OnDragCollided = null,
-            Action<Collider2D> OnDragCollideFailed = null,
-            Action<Collider2D> OnDropped = null,
-            Action<Collider2D> OnDropFailed = null,
-            SafeDropType safeDropType = SafeDropType.UnableToTakeAny,
-            DragType dragType = DragType.MoveWith,
-            float followSpeed = 0.5f,
-            float dropDuration = 0.5f) {
-            return new DragAndDropAction(OnTaken: OnTaken,
-                OnTakeFailed: OnTakeFailed,
-                OnDragged: OnDragged,
-                OnDragCollided: OnDragCollided,
-                OnDragCollideFailed: OnDragCollideFailed,
-                OnDropped: OnDropped,
-                OnDropFailed: OnDropFailed,
-                takableInfo: new FullNamesInfo(correctTakeFullNames, uncorrectTakeFullNames),
-                dragCollidableInfo: new FullNamesInfo(correctDragCollidableFullNames, uncorrectDragCollidableFullNames),
-                droppableInfo: new FullNamesInfo(correctDropFullNames, uncorrectDropFullNames),
-                safeDropType: safeDropType,
-                dragType: dragType,
-                followSpeed: followSpeed,
-                dropDuration: dropDuration);
         }
         public Tween DropDraggableTo(Vector3 position, float duration) {
             if (!draggableObject) {
@@ -231,69 +133,72 @@ namespace AInput {
                 if (OnDragged != null) {
                     OnDragged(takenObjectCollider);
                 }
-                bool wasColliderEnabled = false;
-                if (takenObjectCollider) {
-                    if (takenObjectCollider.enabled) {
-                        takenObjectCollider.enabled = false;
-                        wasColliderEnabled = true;
-                    }
-                }
-                var touchedColliders = inputController.TouchedCollidersWorld();
-                if (wasColliderEnabled) {
-                    takenObjectCollider.enabled = true;
-                }
-                int length = touchedColliders.Length;
-                for (int i = 0; i < length; i++) {
-                    var collider = touchedColliders[i];
-                    if (dragCollidableInfo.IsCorrect(collider)) {
-                        if (OnDragCollided != null) {
-                            OnDragCollided(collider);
+                if (dragCollidableInfo != null) {
+                    bool wasColliderEnabled = false;
+                    if (takenObjectCollider) {
+                        if (takenObjectCollider.enabled) {
+                            takenObjectCollider.enabled = false;
+                            wasColliderEnabled = true;
                         }
-                        DropDraggableTo(collider.transform.position, dropDuration);
-                        break;
                     }
-                    if (dragCollidableInfo.IsUncorrect(collider)) {
-                        if (OnDragCollideFailed != null) {
-                            OnDragCollideFailed(collider);
+                    var touchedColliders = inputController.TouchedCollidersWorld();
+                    if (wasColliderEnabled) {
+                        takenObjectCollider.enabled = true;
+                    }
+                    int length = touchedColliders.Length;
+                    for (int i = 0; i < length; i++) {
+                        var collider = touchedColliders[i];
+                        if (dragCollidableInfo.IsCorrect(collider)) {
+                            if (OnDragCollided != null) {
+                                OnDragCollided(collider);
+                            }
+                            DropDraggableTo(collider.transform.position, dropDuration);
+                            break;
                         }
-                        DropDraggableTo(startPosition, dropDuration);
-                        break;
+                        if (dragCollidableInfo.IsUncorrect(collider)) {
+                            if (OnDragCollideFailed != null) {
+                                OnDragCollideFailed(collider);
+                            }
+                            DropDraggableTo(startPosition, dropDuration);
+                            break;
+                        }
                     }
                 }
             }
             if (inputController.mouseUp && draggableObject) {
-                bool wasColliderEnabled = false;
-                if (takenObjectCollider) {
-                    if (takenObjectCollider.enabled) {
-                        takenObjectCollider.enabled = false;
-                        wasColliderEnabled = true;
-                    }
-                }
-                var touchedColliders = inputController.TouchedCollidersWorld();
-                if (wasColliderEnabled) {
-                    takenObjectCollider.enabled = true;
-                }
-                int length = touchedColliders.Length;
-                for (int i = 0; i < length; i++) {
-                    var collider = touchedColliders[i];
-                    if (droppableInfo.IsCorrect(collider)) {
-                        if (OnDropped != null) {
-                            OnDropped(collider);
+                if (droppableInfo != null) {
+                    bool wasColliderEnabled = false;
+                    if (takenObjectCollider) {
+                        if (takenObjectCollider.enabled) {
+                            takenObjectCollider.enabled = false;
+                            wasColliderEnabled = true;
                         }
-                        DropDraggableTo(collider.transform.position, dropDuration);
-                        return;
                     }
-                    if (droppableInfo.IsUncorrect(collider)) {
-                        if (OnDropFailed != null) {
-                            OnDropFailed(collider);
+                    var touchedColliders = inputController.TouchedCollidersWorld();
+                    if (wasColliderEnabled) {
+                        takenObjectCollider.enabled = true;
+                    }
+                    int length = touchedColliders.Length;
+                    for (int i = 0; i < length; i++) {
+                        var collider = touchedColliders[i];
+                        if (droppableInfo.IsCorrect(collider)) {
+                            if (OnDropped != null) {
+                                OnDropped(collider);
+                            }
+                            DropDraggableTo(collider.transform.position, dropDuration);
+                            return;
                         }
-                        DropDraggableTo(startPosition, dropDuration);
-                        return;
+                        if (droppableInfo.IsUncorrect(collider)) {
+                            if (OnDropFailed != null) {
+                                OnDropFailed(collider);
+                            }
+                            DropDraggableTo(startPosition, dropDuration);
+                            return;
+                        }
                     }
                 }
                 DropDraggableTo(startPosition, dropDuration);
             }
         }
-        #endregion
     }
 }

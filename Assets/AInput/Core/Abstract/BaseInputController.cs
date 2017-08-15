@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using DG.Tweening;
 using AInput.Extensions;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AInput {
@@ -116,22 +117,17 @@ namespace AInput {
             Collider2D[] touchedColliders = TouchedCollidersScreen();
             return touchedColliders.Contains(collider2d);
         }
+
         /// <summary>
-        /// Current action.
+        /// Current actions list.
         /// </summary>
-        private BaseAction _currentAction;
+        private List<BaseAction> _currentActions = new List<BaseAction>();
         /// <summary>
-        /// Current action.
+        /// Current actions list.
         /// </summary>
-        public BaseAction currentAction {
+        public List<BaseAction> currentActions {
             get {
-                return _currentAction;
-            }
-            set {
-                _currentAction = value;
-                if (value != null) {
-                    value.inputController = this;
-                }
+                return _currentActions;
             }
         }
 
@@ -170,8 +166,8 @@ namespace AInput {
                 dragDeltaLengthWorld += deltaWorld.magnitude;
             }
             IUpdate();
-            if (currentAction != null) {
-                currentAction.Update();
+            foreach (var action in currentActions) {
+                action.Update();
             }
             if (mouseUp) {
                 currMouseScreenPos = null;

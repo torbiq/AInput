@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using AInput.Info;
 
 namespace AInput {
     public class FastTapsAction : BaseAction {
@@ -17,17 +16,16 @@ namespace AInput {
         public bool isProgressDecreasing { get; private set; }
         public bool isProgressTimeScalable { get; private set; }
         public bool isProgressDecreasable { get; private set; }
-        #region Constructors
         public FastTapsAction(BaseInfo tappableInfo,
-            Action<Collider2D> OnTap,
-            Action OnProgressCompleteToMax,
-            Action OnProgressFallenToMin,
-            float progressPerTap,
-            float progressRemovedPerSecond,
-            float minProgress,
-            float maxProgress,
-            bool isProgressTimeScalable,
-            bool isProgressDecreasable) {
+            Action<Collider2D> OnTap = null,
+            Action OnProgressComplete = null,
+            Action OnProgressFallenToMin = null,
+            float progressPerTap = 0.3f,
+            float progressRemovedPerSecond = 0.35f,
+            float minProgress = 0.0f,
+            float maxProgress = 1.0f,
+            bool isProgressTimeScalable = true,
+            bool isProgressDecreasable = true) {
             this.tappableInfo = tappableInfo;
             this.OnTap += OnTap;
             this.OnProgressCompleteToMax += OnProgressCompleteToMax;
@@ -50,70 +48,6 @@ namespace AInput {
                 Log.Warning("OnProgressFallenToMin action is being listened, but progress isn't decreasable.");
             }
         }
-        public static FastTapsAction Colliders(List<Collider2D> correctColliders = null,
-            Action<Collider2D> OnTap = null,
-            Action OnProgressComplete = null,
-            Action OnProgressFallenToMin = null,
-            float progressPerTap = 0.3f,
-            float progressRemovedPerSecond = 0.35f,
-            float minProgress = 0.0f,
-            float maxProgress = 1.0f,
-            bool isProgressTimeScalable = true,
-            bool isProgressDecreasable = true) {
-            return new FastTapsAction(new CollidersInfo(collidersNeeded: correctColliders),
-                OnTap: OnTap,
-                OnProgressCompleteToMax: OnProgressComplete,
-                OnProgressFallenToMin: OnProgressFallenToMin,
-                progressPerTap: progressPerTap,
-                progressRemovedPerSecond: progressRemovedPerSecond,
-                minProgress: minProgress,
-                maxProgress: maxProgress,
-                isProgressTimeScalable: isProgressTimeScalable,
-                isProgressDecreasable: isProgressDecreasable);
-        }
-        public static FastTapsAction NamePart(string correctNamePart = "",
-            Action<Collider2D> OnTap = null,
-            Action OnProgressComplete = null,
-            Action OnProgressFallenToMin = null,
-            float progressPerTap = 0.3f,
-            float progressRemovedPerSecond = 0.35f,
-            float minProgress = 0.0f,
-            float maxProgress = 1.0f,
-            bool isProgressTimeScalable = true,
-            bool isProgressDecreasable = true) {
-            return new FastTapsAction(new NamePartInfo(namePartNeeded: correctNamePart),
-                OnTap: OnTap,
-                OnProgressCompleteToMax: OnProgressComplete,
-                OnProgressFallenToMin: OnProgressFallenToMin,
-                progressPerTap: progressPerTap,
-                progressRemovedPerSecond: progressRemovedPerSecond,
-                minProgress: minProgress,
-                maxProgress: maxProgress,
-                isProgressTimeScalable: isProgressTimeScalable,
-                isProgressDecreasable: isProgressDecreasable);
-        }
-        public static FastTapsAction FullNames(List<string> correctNames = null,
-            Action<Collider2D> OnTap = null,
-            Action OnProgressComplete = null,
-            Action OnProgressFallenToMin = null,
-            float progressPerTap = 0.3f,
-            float progressRemovedPerSecond = 0.35f,
-            float minProgress = 0.0f,
-            float maxProgress = 1.0f,
-            bool isProgressTimeScalable = true,
-            bool isProgressDecreasable = true) {
-            return new FastTapsAction(new FullNamesInfo(fullNamesNeeded: correctNames),
-                OnTap: OnTap,
-                OnProgressCompleteToMax: OnProgressComplete,
-                OnProgressFallenToMin: OnProgressFallenToMin,
-                progressPerTap: progressPerTap,
-                progressRemovedPerSecond: progressRemovedPerSecond,
-                minProgress: minProgress,
-                maxProgress: maxProgress,
-                isProgressTimeScalable: isProgressTimeScalable,
-                isProgressDecreasable: isProgressDecreasable);
-        }
-        #endregion
         public override void Update() {
             if (inputController.mouseDown) {
                 if (progress < maxProgress) {
@@ -140,7 +74,6 @@ namespace AInput {
             }
             if (isProgressDecreasing) {
                 progress -= progressRemovedPerSecond * (isProgressTimeScalable ? Time.deltaTime : Time.unscaledDeltaTime);
-
                 if (progress < minProgress) {
                     progress = minProgress;
                     isProgressDecreasing = false;
