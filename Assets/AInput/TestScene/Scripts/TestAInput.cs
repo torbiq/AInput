@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using DG.Tweening;
+//using DG.Tweening;
 using AInput;
 
 public class TestAInput : MonoBehaviour {
@@ -10,17 +10,8 @@ public class TestAInput : MonoBehaviour {
     private List<Collider2D> _grayColliders = new List<Collider2D>();
     [SerializeField]
     private List<Collider2D> _blackColliders = new List<Collider2D>();
-
-    private void RandomScaling(Transform transform, float minScale, float maxScale, float minDuration, float maxDuration) {
-        transform.DOScale(Random.Range(minScale, maxScale), Random.Range(minDuration, maxDuration)).SetEase(Ease.Linear).SetLoops(1, LoopType.Yoyo).OnComplete(() => {
-            RandomScaling(transform, minScale, maxScale, minDuration, maxDuration);
-        });
-    }
-
+    
     private void Awake() {
-        foreach (var blackCollider in _blackColliders) {
-            RandomScaling(blackCollider.transform, 0.5f, 3f, 1.5f, 3f);
-        }
         _dragRedToYellow = new DragAndDropAction(
             takableInfo: new FullNamesInfo(new List<string> { "Red", "Purple", }, new List<string> { "Yellow", "Purple", }),
             dragCollidableInfo: new CollidersInfo(_grayColliders, _blackColliders),

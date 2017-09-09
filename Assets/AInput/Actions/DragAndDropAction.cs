@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using DG.Tweening;
 using System;
 using System.Collections.Generic;
 
@@ -64,37 +63,10 @@ namespace AInput {
             this.startPosition = default(Vector3);
             this.takenObjectCollider = null;
         }
-        public Tween DropDraggableTo(Vector3 position, float duration) {
-            if (!draggableObject) {
-                Log.Error("No draggable object.");
-                return null;
-            }
-            var objectDragged = draggableObject;
-            switch (safeDropType) {
-                case SafeDropType.UnableToTakeAny:
-                    canTake = false;
-                    DOVirtual.DelayedCall(duration, () => {
-                        canTake = true;
-                    }, false);
-                    break;
-                case SafeDropType.DraggedOffCollider:
-                    var draggedCollider = takenObjectCollider;
-                    if (draggedCollider) {
-                        draggedCollider.enabled = false;
-                    }
-                    DOVirtual.DelayedCall(duration, () => {
-                        if (draggedCollider) {
-                            draggedCollider.enabled = true;
-                        }
-                    }, false);
-                    break;
-                default:
-                    throw new Exception("Safe drop type unrecognized.");
-            }
+        private void DropDraggable() {
             draggableObject = null;
             takenObjectCollider = null;
             startPosition = default(Vector3);
-            return objectDragged.transform.DOMove(position, duration);
         }
         public override void Update() {
             if (inputController.mouseDown && canTake) {
@@ -152,14 +124,14 @@ namespace AInput {
                             if (OnDragCollided != null) {
                                 OnDragCollided(collider);
                             }
-                            DropDraggableTo(collider.transform.position, dropDuration);
+                            DropDraggable();
                             break;
                         }
                         if (dragCollidableInfo.IsUncorrect(collider)) {
                             if (OnDragCollideFailed != null) {
                                 OnDragCollideFailed(collider);
                             }
-                            DropDraggableTo(startPosition, dropDuration);
+                            DropDraggable();
                             break;
                         }
                     }
@@ -185,19 +157,19 @@ namespace AInput {
                             if (OnDropped != null) {
                                 OnDropped(collider);
                             }
-                            DropDraggableTo(collider.transform.position, dropDuration);
+                            DropDraggable();
                             return;
                         }
                         if (droppableInfo.IsUncorrect(collider)) {
                             if (OnDropFailed != null) {
                                 OnDropFailed(collider);
                             }
-                            DropDraggableTo(startPosition, dropDuration);
+                            DropDraggable();
                             return;
                         }
                     }
                 }
-                DropDraggableTo(startPosition, dropDuration);
+                DropDraggable();
             }
         }
     }
