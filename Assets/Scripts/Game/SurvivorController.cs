@@ -47,6 +47,8 @@ public class SurvivorController : MonoBehaviour {
     [SerializeField]
     private float _moveSpeed = 5f;
     [SerializeField]
+    private float _rotationSpeed = 5f;
+    [SerializeField]
     private float _moveSmooth = 0.5f;
     [SerializeField]
     private float _rotationSmooth = 0.5f;
@@ -58,7 +60,7 @@ public class SurvivorController : MonoBehaviour {
     private SpriteAnimationController _legsController;
     
     private Rigidbody2D _ridgidbody2D;
-    private Vector2 _currentRotationSpeed;
+    //private Vector2 _currentRotationInputSpeed;
     private Vector2 _currentMoveSpeed;
 
     private BaseWeapon _weapon;
@@ -72,27 +74,19 @@ public class SurvivorController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        _weapon = new AK47(transform, 30, 300);
+        //_weapon = new AK47(transform, 30, 300);
 	}
 	
-	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButton(0)) {
-            _weapon.Fire();
-        }
-
         var inputDir = _moveJoystick.GetDirection();
-
-        _currentRotationSpeed = Vector2.Lerp(_currentRotationSpeed, inputDir, _rotationSmooth * Time.deltaTime);
         _currentMoveSpeed = Vector2.Lerp(_currentMoveSpeed, inputDir * _moveSpeed, _moveSmooth * Time.deltaTime);
-
-        _ridgidbody2D.MovePosition(transform.position + (Vector3)_currentMoveSpeed * Time.deltaTime);
-
-        if (_currentRotationSpeed.sqrMagnitude > 0f) {
-            _character.LookAt2D(_currentRotationSpeed);
-        }
-
         float msSqrMag = _currentMoveSpeed.sqrMagnitude;
+        Debug.Log(inputDir);
+
+        if (inputDir.sqrMagnitude > 0f) {
+            _character.LookAt2D(inputDir);
+            _ridgidbody2D.MovePosition(transform.position + (Vector3)_currentMoveSpeed * Time.deltaTime);
+        }
 
         if (msSqrMag >= 2f) {
             if (State != CharacterState.Running) {

@@ -4,20 +4,24 @@ using UnityEngine;
 
 [Serializable]
 public abstract class WeaponBehavior {
-    public Transform spawnPoint;
-    public float delay;
-    public float nextAttackTime;
-    public AudioClip[] attackClips;
+    [SerializeField]
+    private Transform _spawnPoint;
+    [SerializeField]
+    private float _delay;
+    [SerializeField]
+    private float _nextAttackTime;
+    [SerializeField]
+    private AudioClip[] _attackClips;
 
     public virtual bool CanFire() {
-        return Time.time >= nextAttackTime;
+        return Time.time >= _nextAttackTime;
     }
     public abstract void Fire();
 
     protected WeaponBehavior(Transform spawnPoint, float delay, AudioClip[] attackClips) {
-        this.spawnPoint = spawnPoint;
-        this.delay = delay;
-        this.nextAttackTime = 0f;
-        this.attackClips = attackClips;
+        _spawnPoint = spawnPoint;
+        _delay = delay;
+        _nextAttackTime = 0f;
+        _attackClips = attackClips;
     }
 }
