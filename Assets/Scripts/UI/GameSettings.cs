@@ -20,14 +20,19 @@ namespace BitcoinMiner {
         private bool _musicEnabled = true;
 
         [SerializeField]
-        private Button _buttonMusicOn;
+        private Image _buttonMusicImage;
         [SerializeField]
-        private Button _buttonMusicOff;
+        private Image _buttonSoundImage;
 
         [SerializeField]
-        private Button _buttonSoundOn;
+        private Sprite _musicOnSprite;
         [SerializeField]
-        private Button _buttonSoundOff;
+        private Sprite _musicOffSprite;
+
+        [SerializeField]
+        private Sprite _soundOnSprite;
+        [SerializeField]
+        private Sprite _soundOffSprite;
 
         private void Awake() {
             _musicVolume = PlayerPrefs.GetFloat(MUSIC_VOLUME_KEY, 1f);
@@ -40,11 +45,14 @@ namespace BitcoinMiner {
         }
 
         private void UpdateButtons() {
-            _buttonMusicOn.gameObject.SetActive(!_musicEnabled);
-            _buttonMusicOff.gameObject.SetActive(_musicEnabled);
-
-            _buttonSoundOn.gameObject.SetActive(!_soundEnabled);
-            _buttonSoundOff.gameObject.SetActive(_soundEnabled);
+            UpdateSoundButton();
+            UpdateMusicButton();
+        }
+        private void UpdateSoundButton() {
+            _buttonSoundImage.sprite = _soundEnabled ? _soundOnSprite : _soundOffSprite;
+        }
+        private void UpdateMusicButton() {
+            _buttonMusicImage.sprite = _musicEnabled ? _musicOnSprite : _musicOffSprite;
         }
 
         private static readonly string MUSIC_VOLUME_KEY = "MUSIC_VOLUME";
@@ -52,12 +60,19 @@ namespace BitcoinMiner {
         private static readonly string MUSIC_ENABLED_KEY = "MUSIC_ENABLED";
         private static readonly string SOUND_ENABLED_KEY = "SOUND_ENABLED";
 
-        public bool musicEnabled { get { return _musicEnabled; } set { _musicEnabled = value; UpdateButtons(); } }
-        public bool soundEnabled { get { return _soundEnabled; } set { _soundEnabled = value; UpdateButtons(); } }
+        public bool musicEnabled { get { return _musicEnabled; } set { _musicEnabled = value; UpdateMusicButton(); } }
+        public bool soundEnabled { get { return _soundEnabled; } set { _soundEnabled = value; UpdateSoundButton(); } }
 
-        public float musicVolume { get { return _musicVolume; } set { _musicVolume = value; } }
-        public float soundVolume { get { return _soundVolume; } set { _soundVolume = value; } }
-        
+        public float musicVolume { get { return _musicEnabled ? _musicVolume : 0f; } set { _musicVolume = value; } }
+        public float soundVolume { get { return _soundEnabled ? _soundVolume : 0f; } set { _soundVolume = value; } }
+
+        public void SwitchSoundEnabled() {
+            soundEnabled = !_soundEnabled;
+        }
+        public void SwitchMusicEnabled() {
+            musicEnabled = !_musicEnabled;
+        }
+
         private void OnApplicationQuit() {
             PlayerPrefs.SetFloat(MUSIC_VOLUME_KEY, _musicVolume);
             PlayerPrefs.SetFloat(SOUND_VOLUME_KEY, _soundVolume);
